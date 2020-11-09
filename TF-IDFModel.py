@@ -157,4 +157,51 @@ print("lr_tfidf_score :",lr_tfidf_score)
 lr_tfidf_report=classification_report(test_sentiments,lr_tfidf_predict,target_names=['Positive','Negative'])
 print(lr_tfidf_report)
 
+#confusion matrix for tfidf features
+cm_tfidf=confusion_matrix(test_sentiments,lr_tfidf_predict,labels=[1,0])
+print(cm_tfidf)
+
+#training the linear svm
+svm=SGDClassifier(loss='hinge',max_iter=500,random_state=42)
+
+#fitting the svm for tfidf features
+svm_tfidf=svm.fit(tv_train_reviews,train_sentiments)
+print(svm_tfidf)
+
+#Predicting the model for tfidf features
+svm_tfidf_predict=svm.predict(tv_test_reviews)
+print(svm_tfidf_predict)
+
+#Accuracy score for tfidf features
+svm_tfidf_score=accuracy_score(test_sentiments,svm_tfidf_predict)
+print("svm_tfidf_score :",svm_tfidf_score)
+
+#Classification report for tfidf features
+svm_tfidf_report=classification_report(test_sentiments,svm_tfidf_predict,target_names=['Positive','Negative'])
+print(svm_tfidf_report)
+
+#confusion matrix for tfidf features
+cm_tfidf=confusion_matrix(test_sentiments,svm_tfidf_predict,labels=[1,0])
+print(cm_tfidf)
+
+#training the model
+mnb=MultinomialNB()
+
+#fitting the svm for tfidf features
+mnb_tfidf=mnb.fit(tv_train_reviews,train_sentiments)
+print(mnb_tfidf)
+
+#Predicting the model for tfidf features
+mnb_tfidf_predict=mnb.predict(tv_test_reviews)
+print(mnb_tfidf_predict)
+
+#Accuracy score for tfidf features
+mnb_tfidf_score=accuracy_score(test_sentiments,mnb_tfidf_predict)
+print("mnb_tfidf_score :",mnb_tfidf_score)
+
+#Classification report for tfidf features
+mnb_tfidf_report=classification_report(test_sentiments,mnb_tfidf_predict,target_names=['Positive','Negative'])
+print(mnb_tfidf_report)
+
+
 
