@@ -157,5 +157,51 @@ print("lr_bow_score :",lr_bow_score)
 lr_bow_report=classification_report(test_sentiments,lr_bow_predict,target_names=['Positive','Negative'])
 print(lr_bow_report)
 
+#confusion matrix for bag of words
+cm_bow=confusion_matrix(test_sentiments,lr_bow_predict,labels=[1,0])
+print(cm_bow)
+
+#training the linear svm
+svm=SGDClassifier(loss='hinge',max_iter=500,random_state=42)
+#fitting the svm for bag of words
+svm_bow=svm.fit(cv_train_reviews,train_sentiments)
+print(svm_bow)
+
+#Predicting the model for bag of words
+svm_bow_predict=svm.predict(cv_test_reviews)
+print(svm_bow_predict)
+
+#Accuracy score for bag of words
+svm_bow_score=accuracy_score(test_sentiments,svm_bow_predict)
+print("svm_bow_score :",svm_bow_score)
+
+#Classification report for bag of words
+svm_bow_report=classification_report(test_sentiments,svm_bow_predict,target_names=['Positive','Negative'])
+print(svm_bow_report)
+
+#confusion matrix for bag of words
+cm_bow=confusion_matrix(test_sentiments,svm_bow_predict,labels=[1,0])
+print(cm_bow)
+
+#training the model
+mnb=MultinomialNB()
+#fitting the svm for bag of words
+mnb_bow=mnb.fit(cv_train_reviews,train_sentiments)
+print(mnb_bow)
+
+#Predicting the model for bag of words
+mnb_bow_predict=mnb.predict(cv_test_reviews)
+print(mnb_bow_predict)
+
+#Accuracy score for bag of words
+mnb_bow_score=accuracy_score(test_sentiments,mnb_bow_predict)
+print("mnb_bow_score :",mnb_bow_score)
+
+#Classification report for bag of words
+mnb_bow_report=classification_report(test_sentiments,mnb_bow_predict,target_names=['Positive','Negative'])
+print(mnb_bow_report)
+
+
+
 
 
