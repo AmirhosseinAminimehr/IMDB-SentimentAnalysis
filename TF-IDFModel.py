@@ -3,7 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import nltk
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelBinarizer
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
@@ -120,15 +120,15 @@ norm_train_reviews = imdbTrainData.text
 #Normalized test reviews
 norm_test_reviews = imdbTestData.text
 
-#Count vectorizer for bag of words
-cv=CountVectorizer(min_df=0,max_df=1,binary=False,ngram_range=(1,3))
-#transformed train reviews
-cv_train_reviews=cv.fit_transform(norm_train_reviews)
-#transformed test reviews
-cv_test_reviews=cv.transform(norm_test_reviews)
 
-print('BOW_cv_train:',cv_train_reviews.shape)
-print('BOW_cv_test:',cv_test_reviews.shape)
+#Tfidf vectorizer
+tv=TfidfVectorizer(min_df=0,max_df=1,use_idf=True,ngram_range=(1,3))
+#transformed train reviews
+tv_train_reviews=tv.fit_transform(norm_train_reviews)
+#transformed test reviews
+tv_test_reviews=tv.transform(norm_test_reviews)
+print('Tfidf_train:',tv_train_reviews.shape)
+print('Tfidf_test:',tv_test_reviews.shape)
 
 #labeling the sentient data
 lb=LabelBinarizer()
@@ -139,23 +139,22 @@ test_sentiments = lb.fit_transform(imdbTestData['label'])
 #training the model
 lr=LogisticRegression(penalty='l2',max_iter=500,C=1,random_state=42)
 
-#Fitting the model for Bag of words
-lr_bow=lr.fit(cv_train_reviews,train_sentiments)
-print(lr_bow)
+#Fitting the model for tfidf features
+lr_tfidf=lr.fit(tv_train_reviews,train_sentiments)
+print(lr_tfidf)
 
 
-#Predicting the model for bag of words
-lr_bow_predict=lr.predict(cv_test_reviews)
-print(lr_bow_predict)
+##Predicting the model for tfidf features
+lr_tfidf_predict=lr.predict(tv_test_reviews)
+print(lr_tfidf_predict)
 
-#Accuracy score for bag of words
-lr_bow_score=accuracy_score(test_sentiments,lr_bow_predict)
-print("lr_bow_score :",lr_bow_score)
+#Accuracy score for tfidf features
+lr_tfidf_score=accuracy_score(test_sentiments,lr_tfidf_predict)
+print("lr_tfidf_score :",lr_tfidf_score)
 
 
-#Classification report for bag of words
-lr_bow_report=classification_report(test_sentiments,lr_bow_predict,target_names=['Positive','Negative'])
-print(lr_bow_report)
-
+#Classification report for tfidf features
+lr_tfidf_report=classification_report(test_sentiments,lr_tfidf_predict,target_names=['Positive','Negative'])
+print(lr_tfidf_report)
 
 
