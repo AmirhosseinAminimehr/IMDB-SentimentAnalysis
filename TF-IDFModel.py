@@ -197,11 +197,12 @@ print(mnb_tfidf_predict)
 
 #Accuracy score for tfidf features
 mnb_tfidf_score=accuracy_score(test_sentiments,mnb_tfidf_predict)
-print("mnb_tfidf_score :",mnb_tfidf_score)
+print("mnb_tfidf_score :",mnb_tfidf_score)``
 
 #Classification report for tfidf features
 mnb_tfidf_report=classification_report(test_sentiments,mnb_tfidf_predict,target_names=['Positive','Negative'])
 print(mnb_tfidf_report)
+
 
 
 

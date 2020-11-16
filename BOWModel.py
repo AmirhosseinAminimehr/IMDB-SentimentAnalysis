@@ -20,7 +20,11 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC
 from textblob import TextBlob
 from textblob import Word
+from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report,confusion_matrix,accuracy_score
+
+from bert_embedding import BertEmbedding
+
 
 #Removing the html strips
 def strip_html(text):
@@ -75,18 +79,6 @@ print(imdbTrainData.head(10))
 print(imdbTrainData.describe())
 print(imdbTrainData['label'].value_counts())
 
-#Setting training text and labels
-train_reviews = imdbTrainData.text
-train_sentiments = imdbTrainData.label
-
-#Setting test text and labels
-test_reviews=imdbTestData.text
-test_sentiments = imdbTestData.label
-
-#Showing the shape of datas
-print(train_reviews.shape,train_sentiments.shape)
-print(test_reviews.shape,test_sentiments.shape)
-
 #Tokenization of text
 tokenizer = ToktokTokenizer()
 
@@ -117,18 +109,27 @@ imdbTestData['text']=imdbTestData['text'].apply(remove_stopwords)
 #normalized train reviews
 norm_train_reviews = imdbTrainData.text
 
-#Normalized test reviews
+#Normalized test reviewssirali
+
 norm_test_reviews = imdbTestData.text
 
 #Count vectorizer for bag of words
-cv=CountVectorizer(min_df=0,max_df=1,binary=False,ngram_range=(1,3))
-#transformed train reviews
-cv_train_reviews=cv.fit_transform(norm_train_reviews)
-#transformed test reviews
-cv_test_reviews=cv.transform(norm_test_reviews)
+# cv=CountVectorizer(min_df=0,max_df=1,binary=False,ngram_range=(1,3))
+# #transformed train reviews
+# cv_train_reviews=cv.fit_transform(norm_train_reviews)
+# #transformed test reviews
+# cv_test_reviews=cv.transform(norm_test_reviews)
 
-print('BOW_cv_train:',cv_train_reviews.shape)
-print('BOW_cv_test:',cv_test_reviews.shape)
+
+bert_embedding = BertEmbedding()
+cv_train_reviews = bert_embedding(norm_train_reviews, 'sum')
+
+cv_test_reviews = bert_embedding(norm_test_reviews, 'sum')
+
+
+
+# print('BOW_cv_train:',cv_train_reviews.shape)
+# print('BOW_cv_test:',cv_test_reviews.shape)
 
 #labeling the sentient data
 lb=LabelBinarizer()
@@ -162,13 +163,21 @@ cm_bow=confusion_matrix(test_sentiments,lr_bow_predict,labels=[1,0])
 print(cm_bow)
 
 #training the linear svm
-svm=SGDClassifier(loss='hinge',max_iter=500,random_state=42)
+# defining parameter range
+param_grid = {'C': [1.0],
+              'gamma': ['scale'],
+              'kernel': ['rbf']}
+
+grid = GridSearchCV(SVC(), param_grid, refit=False, verbose=1)
+
+#svm=SGDClassifier(loss='hinge',max_iter=500,random_state=42)
+
 #fitting the svm for bag of words
-svm_bow=svm.fit(cv_train_reviews,train_sentiments)
+svm_bow=grid.fit(cv_train_reviews,train_sentiments)
 print(svm_bow)
 
 #Predicting the model for bag of words
-svm_bow_predict=svm.predict(cv_test_reviews)
+svm_bow_predict=grid.predict(cv_test_reviews)
 print(svm_bow_predict)
 
 #Accuracy score for bag of words
